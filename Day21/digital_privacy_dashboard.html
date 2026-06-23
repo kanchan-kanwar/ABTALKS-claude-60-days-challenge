@@ -1,0 +1,504 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.db{padding:1.5rem 0;max-width:900px}
+.section-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:.75rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.metric-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.metric-sub{font-size:11px;color:var(--color-text-tertiary);margin-top:3px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.score-ring{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:var(--border-radius-md)}
+.badge-red{background:#FCEBEB;color:#A32D2D}
+.badge-orange{background:#FAEEDA;color:#854F0B}
+.badge-yellow{background:#FAEEDA;color:#633806}
+.badge-green{background:#EAF3DE;color:#3B6D11}
+.badge-blue{background:#E6F1FB;color:#185FA5}
+.badge-gray{background:#F1EFE8;color:#5F5E5A}
+.row-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.row-item:last-child{border-bottom:none}
+.bar-bg{background:var(--color-background-secondary);border-radius:4px;height:6px;flex:1;margin:0 12px}
+.bar-fill{height:6px;border-radius:4px}
+.tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;margin:2px;font-weight:500}
+.fact-tag{background:#E6F1FB;color:#185FA5}
+.est-tag{background:#FAEEDA;color:#854F0B}
+.twin-row{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:12px;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.twin-row:last-child{border-bottom:none}
+.risk-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.risk-item:last-child{border-bottom:none}
+.risk-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.heat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.heat-cell{border-radius:var(--border-radius-md);padding:10px 6px;text-align:center;font-size:11px;font-weight:500}
+.plan-step{display:flex;gap:12px;padding:10px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.plan-step:last-child{border-bottom:none}
+.step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px}
+.verdict-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,#639922,#EF9F27,#D85A30,#E24B4A);position:relative;margin:12px 0}
+.verdict-marker{position:absolute;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--color-text-primary);transform:translateX(-50%)}
+.sim-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.sim-row:last-child{border-bottom:none}
+.toggle{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:.2s}
+.toggle.on{background:#639922}
+.toggle.off{background:#B4B2A9}
+.toggle::after{content:'';position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.toggle.on::after{left:19px}
+.toggle.off::after{left:3px}
+h2.sec{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0}
+.app-chip{display:inline-flex;align-items:center;gap:5px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:4px 10px;font-size:12px;color:var(--color-text-secondary);margin:3px}
+</style>
+
+<div class="db">
+<h2 class="sr-only">Digital Privacy Dashboard — analysis of your reported digital footprint across 15 services.</h2>
+
+<div style="margin-bottom:1.5rem">
+  <div style="font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px">Digital footprint dashboard</div>
+  <div style="font-size:13px;color:var(--color-text-secondary)">Based on 15 reported services &nbsp;·&nbsp; <span class="badge badge-blue">Fact-based analysis</span> &nbsp;<span class="badge badge-orange">Estimates labeled</span></div>
+</div>
+
+<div class="grid4" style="margin-bottom:1.5rem">
+  <div class="metric-card">
+    <div class="metric-label">Digital footprint score</div>
+    <div class="metric-value" style="color:#D85A30">74<span style="font-size:14px;color:var(--color-text-secondary)">/100</span></div>
+    <div class="metric-sub">🟠 Significant</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Privacy score</div>
+    <div class="metric-value" style="color:#854F0B">38<span style="font-size:14px;color:var(--color-text-secondary)">/100</span></div>
+    <div class="metric-sub">🟠 Fair</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Services tracked</div>
+    <div class="metric-value">15</div>
+    <div class="metric-sub">Across 5 parent companies</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Ecosystem concentration</div>
+    <div class="metric-value" style="color:#A32D2D">81%</div>
+    <div class="metric-sub">Google + Meta dominant</div>
+  </div>
+</div>
+
+<div class="grid4" style="margin-bottom:1.5rem">
+  <div class="metric-card">
+    <div class="metric-label">Tracking surface</div>
+    <div class="metric-value">High</div>
+    <div class="metric-sub">9 platforms collect behavioral data</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Data broker risk</div>
+    <div class="metric-value" style="color:#A32D2D">Elevated</div>
+    <div class="metric-sub">Shopping + social overlap</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Cross-app tracking</div>
+    <div class="metric-value" style="color:#D85A30">Active</div>
+    <div class="metric-sub">Estimated via SDK sharing</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Identity exposure</div>
+    <div class="metric-value">Medium</div>
+    <div class="metric-sub">Real identity on 8 services</div>
+  </div>
+</div>
+
+<div style="margin-bottom:4px;display:flex;align-items:center;gap:8px">
+  <div style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary)">Active services</div>
+</div>
+<div style="margin-bottom:1.5rem">
+  <span class="app-chip"><i class="ti ti-brand-instagram" aria-hidden="true"></i>Instagram</span>
+  <span class="app-chip"><i class="ti ti-brand-snapchat" aria-hidden="true"></i>Snapchat</span>
+  <span class="app-chip"><i class="ti ti-brand-tiktok" aria-hidden="true"></i>TikTok</span>
+  <span class="app-chip"><i class="ti ti-brand-youtube" aria-hidden="true"></i>YouTube</span>
+  <span class="app-chip"><i class="ti ti-brand-discord" aria-hidden="true"></i>Discord</span>
+  <span class="app-chip"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i>WhatsApp</span>
+  <span class="app-chip"><i class="ti ti-message-circle" aria-hidden="true"></i>iMessage</span>
+  <span class="app-chip"><i class="ti ti-brand-spotify" aria-hidden="true"></i>Spotify</span>
+  <span class="app-chip"><i class="ti ti-device-gamepad" aria-hidden="true"></i>Roblox</span>
+  <span class="app-chip"><i class="ti ti-device-mobile" aria-hidden="true"></i>PUBG Mobile</span>
+  <span class="app-chip"><i class="ti ti-brand-amazon" aria-hidden="true"></i>Amazon</span>
+  <span class="app-chip"><i class="ti ti-shopping-bag" aria-hidden="true"></i>Meesho</span>
+  <span class="app-chip"><i class="ti ti-brand-google" aria-hidden="true"></i>Google Search</span>
+  <span class="app-chip"><i class="ti ti-credit-card" aria-hidden="true"></i>Google Pay</span>
+  <span class="app-chip"><i class="ti ti-photo" aria-hidden="true"></i>Google Photos</span>
+</div>
+
+<div class="divider"></div>
+
+<div style="margin-bottom:1.5rem">
+  <div class="section-title">Exposure heatmap</div>
+  <div class="heat-grid">
+    <div class="heat-cell" style="background:#FCEBEB;color:#A32D2D">Google Search<br><span style="font-weight:400;font-size:10px">Critical</span></div>
+    <div class="heat-cell" style="background:#FCEBEB;color:#A32D2D">Instagram<br><span style="font-weight:400;font-size:10px">Critical</span></div>
+    <div class="heat-cell" style="background:#FCEBEB;color:#A32D2D">TikTok<br><span style="font-weight:400;font-size:10px">Critical</span></div>
+    <div class="heat-cell" style="background:#FCEBEB;color:#A32D2D">YouTube<br><span style="font-weight:400;font-size:10px">Critical</span></div>
+    <div class="heat-cell" style="background:#FCEBEB;color:#A32D2D">Google Pay<br><span style="font-weight:400;font-size:10px">Critical</span></div>
+    <div class="heat-cell" style="background:#FAEEDA;color:#854F0B">WhatsApp<br><span style="font-weight:400;font-size:10px">High</span></div>
+    <div class="heat-cell" style="background:#FAEEDA;color:#854F0B">Amazon<br><span style="font-weight:400;font-size:10px">High</span></div>
+    <div class="heat-cell" style="background:#FAEEDA;color:#854F0B">Snapchat<br><span style="font-weight:400;font-size:10px">High</span></div>
+    <div class="heat-cell" style="background:#FAEEDA;color:#854F0B">Google Photos<br><span style="font-weight:400;font-size:10px">High</span></div>
+    <div class="heat-cell" style="background:#FAEEDA;color:#854F0B">Spotify<br><span style="font-weight:400;font-size:10px">High</span></div>
+    <div class="heat-cell" style="background:#E6F1FB;color:#185FA5">Discord<br><span style="font-weight:400;font-size:10px">Moderate</span></div>
+    <div class="heat-cell" style="background:#E6F1FB;color:#185FA5">PUBG Mobile<br><span style="font-weight:400;font-size:10px">Moderate</span></div>
+    <div class="heat-cell" style="background:#E6F1FB;color:#185FA5">Meesho<br><span style="font-weight:400;font-size:10px">Moderate</span></div>
+    <div class="heat-cell" style="background:#E6F1FB;color:#185FA5">Roblox<br><span style="font-weight:400;font-size:10px">Moderate</span></div>
+    <div class="heat-cell" style="background:#EAF3DE;color:#3B6D11">iMessage<br><span style="font-weight:400;font-size:10px">Lower</span></div>
+  </div>
+  <div style="display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--color-text-secondary)">
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#FCEBEB;border:0.5px solid #F09595"></span> Critical</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#FAEEDA;border:0.5px solid #FAC775"></span> High</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#E6F1FB;border:0.5px solid #85B7EB"></span> Moderate</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#EAF3DE;border:0.5px solid #C0DD97"></span> Lower</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="grid2" style="margin-bottom:1.5rem">
+  <div class="card">
+    <div class="section-title">Company exposure ranking</div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">Google</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:95%;background:#E24B4A"></div></div>
+      <span class="badge badge-red">95%</span>
+    </div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">Meta</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:82%;background:#D85A30"></div></div>
+      <span class="badge badge-orange">82%</span>
+    </div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">ByteDance</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:75%;background:#EF9F27"></div></div>
+      <span class="badge badge-yellow">75%</span>
+    </div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">Amazon</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:60%;background:#EF9F27"></div></div>
+      <span class="badge badge-yellow">60%</span>
+    </div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">Apple</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:28%;background:#639922"></div></div>
+      <span class="badge badge-green">28%</span>
+    </div>
+    <div class="row-item">
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-primary);min-width:80px">Spotify</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:45%;background:#378ADD"></div></div>
+      <span class="badge badge-blue">45%</span>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px">Scores = estimated data breadth + cross-service correlation potential</div>
+  </div>
+  <div class="card">
+    <div class="section-title">Services per parent company</div>
+    <div style="position:relative;width:100%;height:200px"><canvas id="compChart" role="img" aria-label="Bar chart showing services per company: Google 3, Meta 2, ByteDance 1, Apple 1, Amazon 2, Others 3">Google 3, Meta 2, ByteDance 1, Apple 1, Amazon 2, Others 3</canvas></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div style="margin-bottom:1.5rem">
+  <div class="section-title">Data collection matrix</div>
+  <div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed">
+    <thead>
+      <tr style="border-bottom:0.5px solid var(--color-border-tertiary)">
+        <th style="text-align:left;padding:6px 8px;color:var(--color-text-secondary);font-weight:500;width:120px">Service</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:56px;text-align:center">Location</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:56px;text-align:center">Biometric</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:60px;text-align:center">Behaviour</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:56px;text-align:center">Financial</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:56px;text-align:center">Contacts</th>
+        <th style="padding:6px 4px;color:var(--color-text-secondary);font-weight:500;width:60px;text-align:center">Ad profile</th>
+      </tr>
+    </thead>
+    <tbody id="matrixBody"></tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:var(--color-text-tertiary);margin-top:8px">● Likely collected &nbsp;◐ Possibly collected &nbsp;○ Unlikely / minimal &nbsp;— Data type not applicable</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="grid2" style="margin-bottom:1.5rem">
+  <div class="card">
+    <div class="section-title">Risk radar</div>
+    <div style="position:relative;width:100%;height:220px"><canvas id="riskRadar" role="img" aria-label="Radar chart showing risk levels across 6 dimensions: identity theft 70, data broker 80, surveillance 75, financial fraud 65, behavioural manipulation 85, location tracking 60">Identity theft 70, data broker 80, surveillance 75, financial fraud 65, behavioural manipulation 85, location tracking 60.</canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title">Top risk factors</div>
+    <div class="risk-item"><div class="risk-dot" style="background:#E24B4A"></div><div><div style="font-weight:500;color:var(--color-text-primary)">Behavioural manipulation</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">TikTok + Instagram + YouTube feed algorithms — Estimate</div></div></div>
+    <div class="risk-item"><div class="risk-dot" style="background:#D85A30"></div><div><div style="font-weight:500;color:var(--color-text-primary)">Data broker exposure</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Shopping data via Amazon + Meesho linkable — Estimate</div></div></div>
+    <div class="risk-item"><div class="risk-dot" style="background:#EF9F27"></div><div><div style="font-weight:500;color:var(--color-text-primary)">Cross-app identity linking</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Google ecosystem spans 4 services — Fact-based</div></div></div>
+    <div class="risk-item"><div class="risk-dot" style="background:#EF9F27"></div><div><div style="font-weight:500;color:var(--color-text-primary)">Financial pattern exposure</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Google Pay transaction history — Estimate</div></div></div>
+    <div class="risk-item"><div class="risk-dot" style="background:#378ADD"></div><div><div style="font-weight:500;color:var(--color-text-primary)">Foreign jurisdiction data</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">TikTok (ByteDance/China) data residency — Fact-based</div></div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="section-title">Digital twin profile <span class="badge badge-orange" style="margin-left:6px">All estimates — inferred from services only</span></div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">What algorithms may estimate about you. None of this is confirmed. Treat as possible — not certain.</div>
+  <div class="twin-row" style="font-size:12px;color:var(--color-text-secondary);font-weight:500">
+    <div>Dimension</div><div>Inferred signal</div><div>Confidence</div>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Age range</div>
+    <div style="color:var(--color-text-primary)">Likely 15–28 &nbsp;<span style="color:var(--color-text-tertiary);font-size:11px">Roblox + PUBG + Snapchat + TikTok usage pattern</span></div>
+    <span class="badge badge-orange">Medium</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Location</div>
+    <div style="color:var(--color-text-primary)">India (likely urban) &nbsp;<span style="color:var(--color-text-tertiary);font-size:11px">Meesho + Google Pay usage — India-dominant services</span></div>
+    <span class="badge badge-red">High</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Lifestyle</div>
+    <div style="color:var(--color-text-primary)">Mobile-first, social, entertainment-oriented</div>
+    <span class="badge badge-orange">Medium</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Shopping</div>
+    <div style="color:var(--color-text-primary)">Online shopper, likely price-conscious &nbsp;<span style="color:var(--color-text-tertiary);font-size:11px">Meesho suggests budget/fashion sensitivity</span></div>
+    <span class="badge badge-yellow">Low–medium</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Entertainment</div>
+    <div style="color:var(--color-text-primary)">Gaming + short-form video + music listener</div>
+    <span class="badge badge-red">High</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Communication</div>
+    <div style="color:var(--color-text-primary)">Multi-platform communicator — WhatsApp (family/formal), Discord (community), iMessage (close circle)</div>
+    <span class="badge badge-orange">Medium</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Financial</div>
+    <div style="color:var(--color-text-primary)">Digital payments user, UPI-linked account likely</div>
+    <span class="badge badge-orange">Medium</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Mobility / travel</div>
+    <div>Not enough information provided.</div>
+    <span class="badge badge-gray">N/A</span>
+  </div>
+  <div class="twin-row">
+    <div style="color:var(--color-text-secondary)">Political leaning</div>
+    <div>Not enough information provided.</div>
+    <span class="badge badge-gray">N/A</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="section-title">Most valuable data assets &nbsp;<span style="font-weight:400;font-size:10px;color:var(--color-text-tertiary)">(estimated monetary/strategic value to platforms)</span></div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">💳</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Payment + purchase history</div><div style="font-size:11px;color:var(--color-text-secondary)">Google Pay + Amazon + Meesho — real spending signals</div></div>
+    </div>
+    <span class="badge badge-red">Highest value</span>
+  </div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🔍</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Search intent data</div><div style="font-size:11px;color:var(--color-text-secondary)">Google Search — reveals desires, fears, health queries, plans</div></div>
+    </div>
+    <span class="badge badge-red">Highest value</span>
+  </div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">👤</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Face + image biometrics</div><div style="font-size:11px;color:var(--color-text-secondary)">Google Photos + Instagram — face data, location metadata in photos</div></div>
+    </div>
+    <span class="badge badge-red">Very high</span>
+  </div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🎵</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Mood + emotion signals</div><div style="font-size:11px;color:var(--color-text-secondary)">Spotify listening patterns — infers mood, mental state, habits</div></div>
+    </div>
+    <span class="badge badge-orange">High</span>
+  </div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">📱</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Social graph + contacts</div><div style="font-size:11px;color:var(--color-text-secondary)">WhatsApp + Instagram + Snapchat — who you know and how often</div></div>
+    </div>
+    <span class="badge badge-orange">High</span>
+  </div>
+  <div class="row-item">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🎮</span>
+      <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Gaming behaviour</div><div style="font-size:11px;color:var(--color-text-secondary)">Roblox + PUBG — session length, spending, social patterns</div></div>
+    </div>
+    <span class="badge badge-yellow">Moderate</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="section-title">Privacy improvement simulator</div>
+  <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px">Toggle actions to see your estimated privacy score change.</div>
+  <div id="simActions">
+    <div class="sim-row" data-pts="12"><div><div style="font-weight:500;color:var(--color-text-primary)">Limit ad tracking on device</div><div style="font-size:11px;color:var(--color-text-secondary)">iOS / Android privacy settings</div></div><button class="toggle on" aria-label="Toggle limit ad tracking" onclick="simToggle(this)"></button></div>
+    <div class="sim-row" data-pts="9"><div><div style="font-weight:500;color:var(--color-text-primary)">Delete TikTok or restrict permissions</div><div style="font-size:11px;color:var(--color-text-secondary)">Removes foreign jurisdiction risk</div></div><button class="toggle off" aria-label="Toggle delete TikTok" onclick="simToggle(this)"></button></div>
+    <div class="sim-row" data-pts="8"><div><div style="font-weight:500;color:var(--color-text-primary)">Use private DNS or VPN</div><div style="font-size:11px;color:var(--color-text-secondary)">Reduces passive network tracking</div></div><button class="toggle off" aria-label="Toggle VPN" onclick="simToggle(this)"></button></div>
+    <div class="sim-row" data-pts="7"><div><div style="font-weight:500;color:var(--color-text-primary)">Review app permissions monthly</div><div style="font-size:11px;color:var(--color-text-secondary)">Location, microphone, contacts</div></div><button class="toggle off" aria-label="Toggle review permissions" onclick="simToggle(this)"></button></div>
+    <div class="sim-row" data-pts="6"><div><div style="font-weight:500;color:var(--color-text-primary)">Enable two-factor authentication (2FA)</div><div style="font-size:11px;color:var(--color-text-secondary)">Reduces identity theft risk</div></div><button class="toggle off" aria-label="Toggle 2FA" onclick="simToggle(this)"></button></div>
+    <div class="sim-row" data-pts="5"><div><div style="font-weight:500;color:var(--color-text-primary)">Use Google Photos auto-delete or limit backup</div><div style="font-size:11px;color:var(--color-text-secondary)">Reduces biometric data accumulation</div></div><button class="toggle off" aria-label="Toggle Photos limit" onclick="simToggle(this)"></button></div>
+  </div>
+  <div style="margin-top:14px;padding:12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:13px;color:var(--color-text-secondary)">Estimated privacy score with selected actions</div>
+    <div style="font-size:22px;font-weight:500" id="simScore" style="color:var(--color-text-primary)">50<span style="font-size:14px;color:var(--color-text-secondary)">/100</span></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="section-title">Privacy improvement plan</div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#FCEBEB;color:#A32D2D">1</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Audit Google account data</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Visit myaccount.google.com → Data & Privacy. Review Web & App Activity, Location History, YouTube History. Pause what you don't need.</div></div>
+  </div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#FAEEDA;color:#854F0B">2</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Restrict Instagram + Facebook ad preferences</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Meta's "Ad Preferences" → turn off activity-based targeting, off-Facebook activity data sharing.</div></div>
+  </div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#FAEEDA;color:#854F0B">3</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Review TikTok data and permissions</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">TikTok Privacy Center → request your data, revoke location and contacts access in phone settings.</div></div>
+  </div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#E6F1FB;color:#185FA5">4</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Enable Apple's "App Tracking Transparency"</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Settings → Privacy → Tracking → Deny cross-app tracking. Reduces Meta + third-party SDK tracking significantly.</div></div>
+  </div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#E6F1FB;color:#185FA5">5</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Use separate email for shopping apps</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Prevents Amazon + Meesho from linking to your Google identity and social profiles.</div></div>
+  </div>
+  <div class="plan-step">
+    <div class="step-num" style="background:#EAF3DE;color:#3B6D11">6</div>
+    <div><div style="font-size:13px;font-weight:500;color:var(--color-text-primary)">Download and review your data from each platform</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:3px">Most platforms support GDPR/DPDP data download requests. Knowing what's held is the first step to managing it.</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card" style="margin-bottom:1.5rem">
+  <div class="section-title">WOW insights</div>
+  <div class="risk-item"><div style="font-size:20px;flex-shrink:0">🤯</div><div><div style="font-weight:500;color:var(--color-text-primary);font-size:13px">Google knows your face, voice, searches, payments, and photos</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Three services (Search, Pay, Photos) together create one of the most comprehensive single-company profiles possible — Estimate</div></div></div>
+  <div class="risk-item"><div style="font-size:20px;flex-shrink:0">📍</div><div><div style="font-weight:500;color:var(--color-text-primary);font-size:13px">Your location is likely known even without GPS</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">IP address + WiFi triangulation + app network calls estimate location passively across most apps — Estimate</div></div></div>
+  <div class="risk-item"><div style="font-size:20px;flex-shrink:0">🛒</div><div><div style="font-weight:500;color:var(--color-text-primary);font-size:13px">Meesho + Amazon together build a detailed spending profile</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Cross-referencing two shopping platforms reveals price sensitivity, lifestyle, and purchase timing — Estimate</div></div></div>
+  <div class="risk-item"><div style="font-size:20px;flex-shrink:0">🎵</div><div><div style="font-weight:500;color:var(--color-text-primary);font-size:13px">Spotify listening habits may reveal your emotional state</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">Music choice patterns correlate strongly with mood and mental health — used in ad targeting research — Estimate</div></div></div>
+  <div class="risk-item"><div style="font-size:20px;flex-shrink:0">🇨🇳</div><div><div style="font-weight:500;color:var(--color-text-primary);font-size:13px">TikTok is the only app here under a non-Indian/Western legal jurisdiction</div><div style="color:var(--color-text-secondary);font-size:12px;margin-top:2px">ByteDance's data governance operates under different legal frameworks than GDPR or India's DPDP Act — Fact-based</div></div></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="card">
+  <div class="section-title">Final verdict</div>
+  <div class="grid2" style="margin-bottom:1rem">
+    <div>
+      <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px">Digital footprint</div>
+      <div class="verdict-bar"><div class="verdict-marker" style="left:74%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary)"><span>Minimal</span><span>Moderate</span><span>Significant</span><span>Extensive</span></div>
+      <div style="font-size:15px;font-weight:500;color:#D85A30;margin-top:8px">74 / 100 — Significant 🟠</div>
+    </div>
+    <div>
+      <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:4px">Privacy posture</div>
+      <div class="verdict-bar" style="background:linear-gradient(90deg,#E24B4A,#D85A30,#EF9F27,#639922)"><div class="verdict-marker" style="left:38%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-tertiary)"><span>Weak</span><span>Fair</span><span>Good</span><span>Strong</span></div>
+      <div style="font-size:15px;font-weight:500;color:#854F0B;margin-top:8px">38 / 100 — Fair 🟠</div>
+    </div>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;font-size:13px;color:var(--color-text-secondary);line-height:1.6">
+    Your digital footprint is <strong style="color:var(--color-text-primary)">broad and concentrated</strong>. Five major companies hold significant estimated data on your behaviour, identity, finances, and social graph. Google alone spans search intent, payments, images, and video — a rare combination. The good news: most risks are addressable with settings changes, not app deletion. Prioritise Google's privacy dashboard, Meta's off-platform activity controls, and TikTok's permissions as first steps.
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const matrixData = [
+  ['Instagram','●','◐','●','○','◐','●'],
+  ['Snapchat','◐','◐','●','○','◐','●'],
+  ['TikTok','●','◐','●','○','◐','●'],
+  ['YouTube','◐','○','●','○','○','●'],
+  ['Discord','○','○','●','○','●','◐'],
+  ['WhatsApp','◐','○','●','○','●','○'],
+  ['iMessage','○','○','◐','○','●','○'],
+  ['Spotify','◐','○','●','◐','○','●'],
+  ['Roblox','○','○','●','◐','○','◐'],
+  ['PUBG Mobile','◐','○','●','◐','○','◐'],
+  ['Amazon','◐','○','●','●','○','●'],
+  ['Meesho','◐','○','●','◐','○','◐'],
+  ['Google Search','◐','○','●','○','○','●'],
+  ['Google Pay','●','○','●','●','○','◐'],
+  ['Google Photos','◐','●','◐','○','○','○'],
+];
+const colColors={'●':'#E24B4A','◐':'#EF9F27','○':'#97C459','—':'#B4B2A9'};
+const tbody=document.getElementById('matrixBody');
+matrixData.forEach(r=>{
+  const tr=document.createElement('tr');
+  tr.style='border-bottom:0.5px solid var(--color-border-tertiary)';
+  const td=document.createElement('td');
+  td.style='padding:6px 8px;font-size:12px;color:var(--color-text-secondary);white-space:nowrap';
+  td.textContent=r[0];
+  tr.appendChild(td);
+  for(let i=1;i<r.length;i++){
+    const c=document.createElement('td');
+    c.style='padding:6px 4px;text-align:center;font-size:16px;color:'+colColors[r[i]];
+    c.textContent=r[i];
+    tr.appendChild(c);
+  }
+  tbody.appendChild(tr);
+});
+
+new Chart(document.getElementById('compChart'),{
+  type:'bar',
+  data:{
+    labels:['Google','Meta','ByteDance','Apple','Amazon / Meesho','Others'],
+    datasets:[{label:'Services',data:[4,2,1,1,2,3],backgroundColor:['#E24B4A','#D85A30','#EF9F27','#639922','#378ADD','#888780'],borderWidth:0}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,0.05)'}},x:{ticks:{font:{size:10}}}}}
+});
+
+new Chart(document.getElementById('riskRadar'),{
+  type:'radar',
+  data:{
+    labels:['Identity theft','Data broker','Surveillance','Financial fraud','Behavioural\nmanipulation','Location tracking'],
+    datasets:[{label:'Risk level',data:[70,80,75,65,85,60],backgroundColor:'rgba(226,75,74,0.15)',borderColor:'#E24B4A',pointBackgroundColor:'#E24B4A',borderWidth:1.5,pointRadius:3}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{beginAtZero:true,max:100,ticks:{display:false},grid:{color:'rgba(0,0,0,0.08)'},pointLabels:{font:{size:10}}}}}
+});
+
+let baseScore=38;
+function simToggle(btn){
+  btn.classList.toggle('on');
+  btn.classList.toggle('off');
+  recalcSim();
+}
+function recalcSim(){
+  let pts=baseScore;
+  document.querySelectorAll('#simActions .sim-row').forEach(row=>{
+    const btn=row.querySelector('.toggle');
+    if(btn.classList.contains('on')) pts+=parseInt(row.dataset.pts)||0;
+  });
+  pts=Math.min(pts,100);
+  const el=document.getElementById('simScore');
+  el.innerHTML=pts+'<span style="font-size:14px;color:var(--color-text-secondary)">/100</span>';
+  el.style.color=pts>=61?'#3B6D11':pts>=31?'#854F0B':'#A32D2D';
+}
+document.querySelector('#simActions .sim-row .toggle.on') && recalcSim();
+recalcSim();
+</script>
