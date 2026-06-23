@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Face Puzzle</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Face Puzzle</h1>
+  <p>Scramble your selfie — solve it</p>
+</header>
+
+<!-- CAMERA SCREEN -->
+<div class="screen active" id="screen-camera">
+  <div class="camera-card">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="camera-overlay"></div>
+    <div class="face-guide"></div>
+    <div class="camera-hint">Position your face in the oval</div>
+  </div>
+  <div id="error-msg"></div>
+  <button class="btn btn-primary" id="btn-snap" disabled>📸 Take Photo</button>
+  <canvas id="snap-canvas" style="display:none"></canvas>
+</div>
+
+<!-- DIFFICULTY SCREEN -->
+<div class="screen" id="screen-difficulty">
+  <div class="preview-wrap">
+    <canvas id="preview-canvas"></canvas>
+  </div>
+  <p class="diff-label">Choose difficulty</p>
+  <div class="diff-grid">
+    <button class="diff-btn selected" data-grid="3">
+      3 × 3
+      <span>9 pieces</span>
+    </button>
+    <button class="diff-btn" data-grid="4">
+      4 × 4
+      <span>16 pieces</span>
+    </button>
+    <button class="diff-btn" data-grid="5">
+      5 × 5
+      <span>25 pieces</span>
+    </button>
+  </div>
+  <button class="btn btn-primary" id="btn-start">▶ Start Puzzle</button>
+  <button class="btn btn-secondary" id="btn-retake">🔄 Retake Photo</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="screen" id="screen-game">
+  <div class="hud">
+    <div class="hud-card">
+      <div class="val" id="hud-time">00:00.0</div>
+      <div class="lbl">Time</div>
+    </div>
+    <div class="hud-card">
+      <div class="val" id="hud-moves">0</div>
+      <div class="lbl">Moves</div>
+    </div>
+    <div class="hud-card">
+      <div class="val" id="hud-correct">0/0</div>
+      <div class="lbl">Correct</div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div id="progress-bar"></div>
+  </div>
+  <div class="progress-label">
+    <span id="prog-label-left">0 placed</span>
+    <span id="prog-label-right">0 remaining</span>
+  </div>
+  <div id="puzzle-board"></div>
+  <div class="game-actions">
+    <button class="btn btn-secondary" id="btn-new-photo" style="flex:1">📷 New Photo</button>
+    <button class="btn btn-danger" id="btn-play-again" style="flex:1">🔀 Shuffle</button>
+  </div>
+</div>
+
+<!-- WIN OVERLAY -->
+<div class="win-overlay" id="win-overlay">
+  <div class="win-card">
+    <span class="win-emoji">🎉</span>
+    <div class="win-title">Puzzle Solved!</div>
+    <div class="win-stats">
+      <div class="win-stat">
+        <span class="v" id="win-time">--</span>
+        <span class="l">Time</span>
+      </div>
+      <div class="win-stat">
+        <span class="v" id="win-moves">--</span>
+        <span class="l">Moves</span>
+      </div>
+      <div class="win-stat">
+        <span class="v" id="win-diff">--</span>
+        <span class="l">Grid</span>
+      </div>
+    </div>
+    <div class="leaderboard" id="leaderboard-wrap">
+      <div class="lb-title">🏆 Best Times</div>
+      <div id="leaderboard-list"></div>
+    </div>
+    <div class="win-btns">
+      <button class="btn btn-primary" id="btn-win-again">🔀 Play Again (same grid)</button>
+      <button class="btn btn-secondary" id="btn-win-newdiff">⚙️ Change Difficulty</button>
+      <button class="btn btn-secondary" id="btn-win-newphoto">📷 New Photo</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
