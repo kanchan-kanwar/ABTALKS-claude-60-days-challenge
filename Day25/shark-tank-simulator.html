@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦈 AI Shark Tank Simulator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --gold: #F0A500;
+    --gold-dim: #C47F00;
+    --gold-glow: rgba(240,165,0,0.25);
+    --navy: #070B14;
+    --navy-mid: #0D1525;
+    --navy-card: #111827;
+    --navy-border: #1E2D45;
+    --white: #F0F4FF;
+    --muted: #6B7FA3;
+    --green: #22C55E;
+    --red: #EF4444;
+    --blue: #3B82F6;
+    --purple: #A855F7;
+    --orange: #F97316;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--gold);
+    color: #000;
+    height: 32px;
+    overflow: hidden;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+  }
+  .ticker-track span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0 32px;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* ── HEADER ── */
+  header {
+    margin-top: 32px;
+    padding: 40px 24px 24px;
+    text-align: center;
+    position: relative;
+  }
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(48px, 10vw, 96px);
+    font-weight: 900;
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+  h1 .shark { color: var(--gold); }
+  h1 .tank { color: var(--white); }
+  .header-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--navy-card);
+    border: 1px solid var(--navy-border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .card:hover { border-color: var(--gold-dim); }
+  .card-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── FORM ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  input, textarea, select {
+    background: var(--navy-mid);
+    border: 1px solid var(--navy-border);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    padding: 10px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-glow);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 12px 28px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: #000;
+    width: 100%;
+    justify-content: center;
+    font-size: 18px;
+    padding: 16px;
+    margin-top: 8px;
+  }
+  .btn-primary:hover { background: #FFB800; transform: translateY(-1px); box-shadow: 0 8px 24px var(--gold-glow); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    font-size: 13px;
+    padding: 8px 16px;
+  }
+  .btn-secondary:hover { background: var(--gold-glow); }
+  .btn-danger {
+    background: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .btn-answer {
+    background: rgba(59,130,246,0.12);
+    color: var(--blue);
+    border: 1px solid rgba(59,130,246,0.3);
+    width: 100%;
+    justify-content: center;
+    font-size: 15px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+  .btn-answer:hover { background: rgba(59,130,246,0.25); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  /* ── JUDGES ROW ── */
+  .judges-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:640px){ .judges-row { grid-template-columns: repeat(2,1fr); } }
+  .judge-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--navy-border);
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .judge-card.active {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px var(--gold-glow);
+  }
+  .judge-card.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--gold);
+  }
+  .judge-emoji { font-size: 32px; margin-bottom: 8px; display: block; }
+  .judge-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--white);
+  }
+  .judge-role {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.08em;
+  }
+  .judge-status {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 8px;
+    height: 16px;
+  }
+  .judge-status.thinking { color: var(--gold); animation: pulse 1s infinite; }
+  .judge-status.done-in { color: var(--green); }
+  .judge-status.done-out { color: var(--red); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── PITCH DISPLAY ── */
+  .pitch-box {
+    background: var(--navy-mid);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .pitch-box h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .pitch-field { margin-bottom: 10px; }
+  .pitch-field-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .pitch-field-value { font-size: 14px; color: var(--white); line-height: 1.5; }
+  .ask-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    padding: 4px 16px;
+    border-radius: 4px;
+  }
+
+  /* ── Q&A ── */
+  .qa-block {
+    margin-bottom: 24px;
+    border: 1px solid var(--navy-border);
+    border-radius: 12px;
+    overflow: hidden;
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform: translateY(12px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  .qa-header {
+    background: var(--navy-mid);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--navy-border);
+  }
+  .qa-judge-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .qa-question {
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--white);
+    background: rgba(240,165,0,0.04);
+  }
+  .qa-question::before { content: '"'; color: var(--gold); font-size: 20px; }
+  .qa-question::after { content: '"'; color: var(--gold); font-size: 20px; }
+  .qa-answer-area {
+    padding: 14px 18px;
+    border-top: 1px solid var(--navy-border);
+  }
+  .qa-reaction {
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-style: italic;
+    background: var(--navy-mid);
+    border-top: 1px solid var(--navy-border);
+    animation: slideIn 0.3s ease;
+  }
+  .qa-reaction.positive { color: #86EFAC; }
+  .qa-reaction.negative { color: #FCA5A5; }
+  .qa-reaction.neutral { color: var(--muted); }
+
+  /* ── SCORES ── */
+  .scores-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  @media(max-width:500px){ .scores-grid { grid-template-columns: 1fr; } }
+  .score-item {}
+  .score-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .score-label span { color: var(--white); font-family: 'JetBrains Mono', monospace; }
+  .score-bar {
+    height: 8px;
+    background: var(--navy-mid);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    background: var(--gold);
+  }
+  .score-fill.high { background: var(--green); }
+  .score-fill.mid { background: var(--gold); }
+  .score-fill.low { background: var(--red); }
+  .total-score {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid var(--navy-border);
+    margin-top: 8px;
+  }
+  .total-score-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--gold);
+  }
+  .total-score-label {
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── DECISION ── */
+  .decision-banner {
+    text-align: center;
+    padding: 32px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  .decision-banner.invest {
+    background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05));
+    border: 2px solid rgba(34,197,94,0.5);
+  }
+  .decision-banner.reject {
+    background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05));
+    border: 2px solid rgba(239,68,68,0.5);
+  }
+  .decision-banner.acquire {
+    background: linear-gradient(135deg, rgba(168,85,247,0.15), rgba(168,85,247,0.05));
+    border: 2px solid rgba(168,85,247,0.5);
+  }
+  .decision-banner.later {
+    background: linear-gradient(135deg, rgba(249,115,22,0.15), rgba(249,115,22,0.05));
+    border: 2px solid rgba(249,115,22,0.5);
+  }
+  @keyframes glow {
+    from { box-shadow: 0 0 20px rgba(240,165,0,0); }
+    to { box-shadow: 0 0 40px var(--gold-glow); }
+  }
+  .decision-icon { font-size: 56px; margin-bottom: 12px; display: block; }
+  .decision-verdict {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 52px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .decision-verdict.invest { color: var(--green); }
+  .decision-verdict.reject { color: var(--red); }
+  .decision-verdict.acquire { color: var(--purple); }
+  .decision-verdict.later { color: var(--orange); }
+  .decision-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .decision-meta-item { text-align: center; }
+  .decision-meta-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .decision-meta-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .decision-reasoning {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    text-align: left;
+    background: var(--navy-mid);
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  /* ── INDIVIDUAL JUDGE VERDICTS ── */
+  .judge-verdicts {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media(max-width:500px){ .judge-verdicts { grid-template-columns: 1fr; } }
+  .verdict-card {
+    background: var(--navy-mid);
+    border: 1px solid var(--navy-border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .verdict-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .verdict-emoji { font-size: 20px; }
+  .verdict-judge-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .verdict-decision {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: auto;
+  }
+  .verdict-decision.in { background: rgba(34,197,94,0.2); color: var(--green); }
+  .verdict-decision.out { background: rgba(239,68,68,0.2); color: var(--red); }
+  .verdict-text {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── ACTIONS ROW ── */
+  .actions-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  /* ── LEADERBOARD ── */
+  .lb-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--navy-border);
+    gap: 12px;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+  .lb-row:hover { background: rgba(240,165,0,0.04); }
+  .lb-rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    width: 24px;
+    text-align: center;
+  }
+  .lb-name {
+    font-weight: 600;
+    flex: 1;
+  }
+  .lb-score {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .lb-verdict {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .lb-verdict.invest { background: rgba(34,197,94,0.2); color: var(--green); }
+  .lb-verdict.reject { background: rgba(239,68,68,0.2); color: var(--red); }
+  .lb-verdict.acquire { background: rgba(168,85,247,0.2); color: var(--purple); }
+  .lb-verdict.later { background: rgba(249,115,22,0.2); color: var(--orange); }
+
+  /* ── LOADING OVERLAY ── */
+  #loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(7,11,20,0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 200;
+    gap: 20px;
+  }
+  #loading-overlay.active { display: flex; }
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--navy-border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── CONFETTI ── */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    z-index: 300;
+    pointer-events: none;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── STEP INDICATOR ── */
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--navy-border);
+    transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--gold); width: 24px; border-radius: 4px; }
+  .step-dot.done { background: var(--gold-dim); }
+
+  /* ── SECTION ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    height: 3px;
+    background: var(--navy-border);
+    border-radius: 2px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-lb {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* ── ANSWER BOX ── */
+  .answer-display {
+    background: rgba(59,130,246,0.08);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #93C5FD;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── SHARE TOAST ── */
+  #share-toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--navy-card);
+    border: 1px solid var(--gold-dim);
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 13px;
+    color: var(--gold);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 300;
+  }
+  #share-toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track" id="ticker">
+    <span>🦈 AI SHARK TANK SIMULATOR</span>
+    <span>💰 PITCH YOUR STARTUP TO AI INVESTORS</span>
+    <span>📈 GET REAL-TIME VALUATION &amp; FEEDBACK</span>
+    <span>🚀 CAN YOU SURVIVE THE TANK?</span>
+    <span>💡 4 AI JUDGES · 5 SCORING DIMENSIONS · LIVE Q&amp;A</span>
+    <span>🦈 AI SHARK TANK SIMULATOR</span>
+    <span>💰 PITCH YOUR STARTUP TO AI INVESTORS</span>
+    <span>📈 GET REAL-TIME VALUATION &amp; FEEDBACK</span>
+    <span>🚀 CAN YOU SURVIVE THE TANK?</span>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">SHARKS ARE DELIBERATING...</div>
+</div>
+
+<!-- SHARE TOAST -->
+<div id="share-toast">✅ Result copied to clipboard!</div>
+
+<header>
+  <div class="header-eyebrow">Season 1 · Episode 1 · Live Pitch</div>
+  <h1><span class="shark">Shark</span> <span class="tank">Tank</span></h1>
+  <div class="header-sub">Powered by Claude AI · Pitch. Answer. Survive.</div>
+</header>
+
+<div class="container">
+  <!-- STEP INDICATOR -->
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress-bar" style="width:25%"></div>
+  </div>
+
+  <!-- SECTION 1: INPUT -->
+  <div class="section active" id="sec-input">
+    <div class="card">
+      <div class="card-title">🎤 Your Pitch</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Startup Name *</label>
+          <input type="text" id="f-name" placeholder="e.g. NexaHealth" maxlength="60">
+        </div>
+        <div class="form-group">
+          <label>Funding Ask *</label>
+          <input type="text" id="f-ask" placeholder="e.g. $500,000 for 10%" maxlength="60">
+        </div>
+        <div class="form-group full">
+          <label>Problem Statement *</label>
+          <textarea id="f-problem" rows="2" placeholder="What painful problem are you solving?"></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Your Solution *</label>
+          <textarea id="f-solution" rows="2" placeholder="How does your product/service solve it?"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Revenue Model *</label>
+          <input type="text" id="f-revenue" placeholder="e.g. SaaS subscription $99/mo">
+        </div>
+        <div class="form-group">
+          <label>Target Audience *</label>
+          <input type="text" id="f-audience" placeholder="e.g. SMB owners aged 30-50">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="startPitch()">🦈 ENTER THE TANK</button>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="card" id="lb-section">
+      <div class="card-title">🏆 Hall of Fame</div>
+      <div id="leaderboard-list"><div class="empty-lb">No pitches yet. Be the first!</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: PITCH ROUND -->
+  <div class="section" id="sec-pitch">
+    <div class="judges-row" id="judges-row"></div>
+    <div class="card">
+      <div class="card-title">📊 The Pitch</div>
+      <div class="pitch-box" id="pitch-display"></div>
+    </div>
+    <div id="qa-container"></div>
+    <div id="submit-answers-area" style="display:none">
+      <button class="btn btn-primary" onclick="submitAllAnswers()">⚡ SUBMIT ANSWERS TO SHARKS</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: SCORING -->
+  <div class="section" id="sec-scoring">
+    <div class="card">
+      <div class="card-title">📈 Scorecard</div>
+      <div class="scores-grid" id="scores-grid"></div>
+      <div class="total-score">
+        <div class="total-score-num" id="total-score-num">—</div>
+        <div class="total-score-label">Overall Score / 100</div>
+      </div>
+    </div>
+    <div id="judge-verdicts-container"></div>
+    <div style="text-align:center; margin-top:8px;">
+      <button class="btn btn-primary" style="max-width:400px; margin:0 auto;" onclick="showDecision()">
+        💰 REVEAL THE DECISION
+      </button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: DECISION -->
+  <div class="section" id="sec-decision">
+    <div id="decision-banner-container"></div>
+    <div class="actions-row">
+      <button class="btn btn-secondary" onclick="downloadPDF()">📄 Download Pitch Report</button>
+      <button class="btn btn-secondary" onclick="shareResult()">🔗 Share Result</button>
+      <button class="btn btn-secondary" onclick="resetApp()">🔄 New Pitch</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ─────────────────────────────────────────────────────────────────
+const state = {
+  pitch: {},
+  questions: [],    // [{judge, emoji, question, answer:'', reaction:''}]
+  scores: {},
+  decision: {},
+  judgeVerdicts: [],
+  totalScore: 0,
+  step: 1
+};
+
+const JUDGES = [
+  { id:'vc',      emoji:'💼', name:'Marcus',  role:'Venture Capitalist', focus:'Market size & scalability' },
+  { id:'founder', emoji:'⚙️', name:'Priya',   role:'Serial Founder',     focus:'Execution & team' },
+  { id:'customer',emoji:'👤', name:'Jordan',  role:'Customer Advocate',  focus:'Real-world usefulness' },
+  { id:'angel',   emoji:'😇', name:'David',   role:'Angel Investor',     focus:'Profitability & ROI' },
+];
+
+// ─── LEADERBOARD ───────────────────────────────────────────────────────────
+function getLB() {
+  try { return JSON.parse(localStorage.getItem('sharkLB') || '[]'); } catch{ return []; }
+}
+function saveLB(item) {
+  const lb = getLB();
+  lb.push(item);
+  lb.sort((a,b) => b.score - a.score);
+  localStorage.setItem('sharkLB', JSON.stringify(lb.slice(0,10)));
+  renderLB();
+}
+function renderLB() {
+  const lb = getLB();
+  const el = document.getElementById('leaderboard-list');
+  if (!lb.length) { el.innerHTML = '<div class="empty-lb">No pitches yet. Be the first!</div>'; return; }
+  el.innerHTML = lb.map((e,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank">#${i+1}</div>
+      <div class="lb-name">${esc(e.name)}</div>
+      <div class="lb-score">${e.score}</div>
+      <div class="lb-verdict ${e.verdict.toLowerCase()}">${e.verdict}</div>
+    </div>
+  `).join('');
+}
+renderLB();
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function setLoading(show, text='SHARKS ARE DELIBERATING...'){
+  const el = document.getElementById('loading-overlay');
+  document.getElementById('loading-text').textContent = text;
+  el.classList.toggle('active', show);
+}
+function setStep(n){
+  state.step = n;
+  document.querySelectorAll('.section').forEach((s,i) => s.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.toggle('active', i+1===n);
+    d.classList.toggle('done', i+1<n);
+  });
+  document.getElementById('progress-bar').style.width = (n/4*100)+'%';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function callClaude(systemPrompt, userPrompt) {
+  return fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role:"user", content: userPrompt }]
+    })
+  }).then(r => r.json()).then(d => {
+    const txt = (d.content||[]).map(c=>c.type==='text'?c.text:'').join('');
+    return txt;
+  });
+}
+
+function parseJSON(text) {
+  try {
+    const clean = text.replace(/```json|```/g,'').trim();
+    const start = clean.indexOf('{'), end = clean.lastIndexOf('}');
+    return JSON.parse(clean.slice(start, end+1));
+  } catch(e) {
+    console.error('JSON parse error', e, text);
+    return null;
+  }
+}
+
+// ─── STEP 1: VALIDATE & START ───────────────────────────────────────────────
+function startPitch() {
+  const fields = ['f-name','f-problem','f-solution','f-revenue','f-audience','f-ask'];
+  const vals = fields.map(id => document.getElementById(id).value.trim());
+  if (vals.some(v=>!v)) { alert('Please fill in all fields before entering the Tank.'); return; }
+  state.pitch = {
+    name: vals[0], problem: vals[1], solution: vals[2],
+    revenue: vals[3], audience: vals[4], ask: vals[5]
+  };
+  renderJudgesRow();
+  renderPitchDisplay();
+  setStep(2);
+  generateQuestions();
+}
+
+// ─── JUDGES ROW ───────────────────────────────────────────────────────────
+function renderJudgesRow() {
+  document.getElementById('judges-row').innerHTML = JUDGES.map(j=>`
+    <div class="judge-card" id="jcard-${j.id}">
+      <span class="judge-emoji">${j.emoji}</span>
+      <div class="judge-name">${j.name}</div>
+      <div class="judge-role">${j.role}</div>
+      <div class="judge-status thinking" id="jstatus-${j.id}">Listening...</div>
+    </div>
+  `).join('');
+}
+
+function setJudgeActive(id, status='thinking') {
+  document.getElementById('jcard-'+id)?.classList.add('active');
+  const st = document.getElementById('jstatus-'+id);
+  if(!st) return;
+  st.className = 'judge-status ' + (status==='thinking'?'thinking':status==='in'?'done-in':'done-out');
+  st.textContent = status==='thinking'?'Deliberating...' : status==='in'?'✓ IN':'✗ OUT';
+}
+
+// ─── PITCH DISPLAY ─────────────────────────────────────────────────────────
+function renderPitchDisplay() {
+  const p = state.pitch;
+  document.getElementById('pitch-display').innerHTML = `
+    <h3>🚀 ${esc(p.name)}</h3>
+    <div class="pitch-field">
+      <div class="pitch-field-label">Problem</div>
+      <div class="pitch-field-value">${esc(p.problem)}</div>
+    </div>
+    <div class="pitch-field">
+      <div class="pitch-field-label">Solution</div>
+      <div class="pitch-field-value">${esc(p.solution)}</div>
+    </div>
+    <div class="pitch-field">
+      <div class="pitch-field-label">Revenue Model</div>
+      <div class="pitch-field-value">${esc(p.revenue)}</div>
+    </div>
+    <div class="pitch-field">
+      <div class="pitch-field-label">Target Audience</div>
+      <div class="pitch-field-value">${esc(p.audience)}</div>
+    </div>
+    <div class="pitch-field">
+      <div class="pitch-field-label">Funding Ask</div>
+      <div class="pitch-field-value"><span class="ask-badge">${esc(p.ask)}</span></div>
+    </div>
+  `;
+}
+
+// ─── GENERATE QUESTIONS ────────────────────────────────────────────────────
+async function generateQuestions() {
+  setLoading(true, 'SHARKS ARE STUDYING YOUR PITCH...');
+  const p = state.pitch;
+  const pitchSummary = `Startup: ${p.name}. Problem: ${p.problem}. Solution: ${p.solution}. Revenue: ${p.revenue}. Audience: ${p.audience}. Ask: ${p.ask}.`;
+
+  const sys = `You are an AI simulating 4 Shark Tank judges. Generate exactly 2 sharp, specific questions per judge based on their unique lens. Return ONLY valid JSON — no extra text.`;
+  const usr = `Pitch: ${pitchSummary}
+Return JSON:
+{
+  "vc": ["question1", "question2"],
+  "founder": ["question1","question2"],
+  "customer": ["question1","question2"],
+  "angel": ["question1","question2"]
+}
+Questions must be direct, probing, and specific to this pitch. VC focuses on TAM/scalability. Founder on execution/team/traction. Customer on real-world UX/need validation. Angel on margins/path to profitability.`;
+
+  try {
+    const raw = await callClaude(sys, usr);
+    const data = parseJSON(raw);
+    if (!data) throw new Error('bad json');
+
+    state.questions = [];
+    JUDGES.forEach(j => {
+      const qs = data[j.id] || ['What is your competitive moat?', 'What are your current metrics?'];
+      qs.forEach(q => state.questions.push({ judge: j, question: q, answer: '', reaction: '', sentiment: 'neutral' }));
+    });
+
+    setLoading(false);
+    renderQA();
+  } catch(e) {
+    console.error(e);
+    // fallback questions
+    state.questions = [];
+    JUDGES.forEach(j => {
+      ['What is your main competitive advantage?', 'What does your growth plan look like?'].forEach(q => {
+        state.questions.push({ judge: j, question: q, answer:'', reaction:'', sentiment:'neutral' });
+      });
+    });
+    setLoading(false);
+    renderQA();
+  }
+}
+
+// ─── RENDER Q&A ────────────────────────────────────────────────────────────
+function renderQA() {
+  const container = document.getElementById('qa-container');
+  container.innerHTML = '';
+  state.questions.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'qa-block';
+    div.id = `qa-${i}`;
+    div.innerHTML = `
+      <div class="qa-header">
+        <span style="font-size:20px">${item.judge.emoji}</span>
+        <span class="qa-judge-name" style="color:var(--gold)">${item.judge.name}</span>
+        <span style="font-size:11px; color:var(--muted); margin-left:4px">${item.judge.role}</span>
+      </div>
+      <div class="qa-question">${esc(item.question)}</div>
+      <div class="qa-answer-area">
+        <textarea id="ans-${i}" rows="2" placeholder="Your answer to ${item.judge.name}..." 
+          oninput="saveAnswer(${i}, this.value)"></textarea>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  document.getElementById('submit-answers-area').style.display = 'block';
+  JUDGES.forEach(j => setJudgeActive(j.id, 'thinking'));
+}
+
+function saveAnswer(i, val) {
+  state.questions[i].answer = val;
+}
+
+// ─── SUBMIT ANSWERS ────────────────────────────────────────────────────────
+async function submitAllAnswers() {
+  setLoading(true, 'SHARKS ARE REACTING...');
+  document.getElementById('submit-answers-area').style.display = 'none';
+
+  const p = state.pitch;
+  const qa = state.questions.map(q => ({
+    judge: q.judge.name,
+    role: q.judge.role,
+    focus: q.judge.focus,
+    question: q.question,
+    answer: q.answer || '[No answer provided]'
+  }));
+
+  const sys = `You are simulating Shark Tank judges reacting to founder answers. Return ONLY valid JSON — no extra text, no markdown.`;
+  const usr = `Startup: ${p.name}. ${p.solution}.
+Q&A pairs: ${JSON.stringify(qa)}
+
+For each Q&A, give a judge reaction (1-2 sentences, in character, direct). Also give sentiment: "positive", "negative", or "neutral".
+
+Return JSON array (same order as input):
+[{"reaction":"...", "sentiment":"positive|negative|neutral"}, ...]`;
+
+  try {
+    const raw = await callClaude(sys, usr);
+    const data = parseJSON(raw);
+    if (!Array.isArray(data)) throw new Error('bad');
+    data.forEach((r, i) => {
+      if (state.questions[i]) {
+        state.questions[i].reaction = r.reaction || '';
+        state.questions[i].sentiment = r.sentiment || 'neutral';
+      }
+    });
+  } catch(e) {
+    state.questions.forEach(q => {
+      q.reaction = 'Interesting answer. We will factor this into our decision.';
+      q.sentiment = 'neutral';
+    });
+  }
+
+  setLoading(false);
+  renderReactions();
+
+  // Now score
+  setTimeout(() => scoreStartup(), 600);
+}
+
+function renderReactions() {
+  state.questions.forEach((item, i) => {
+    const block = document.getElementById(`qa-${i}`);
+    if (!block) return;
+    const ta = document.getElementById(`ans-${i}`);
+    if (ta) {
+      const ansVal = ta.value;
+      ta.parentElement.innerHTML = ansVal
+        ? `<div class="answer-display">${esc(ansVal)}</div>`
+        : `<div class="answer-display" style="opacity:0.5;font-style:italic">No answer provided</div>`;
+    }
+    if (item.reaction) {
+      const rDiv = document.createElement('div');
+      rDiv.className = `qa-reaction ${item.sentiment}`;
+      rDiv.textContent = item.reaction;
+      block.appendChild(rDiv);
+    }
+  });
+}
+
+// ─── SCORING ───────────────────────────────────────────────────────────────
+async function scoreStartup() {
+  setLoading(true, 'CALCULATING SCORES...');
+  const p = state.pitch;
+  const qaSummary = state.questions.map(q=>`${q.judge.name}: Q: ${q.question} | A: ${q.answer}`).join('\n');
+
+  const sys = `You are a panel of Shark Tank investors. Score this startup. Return ONLY valid JSON.`;
+  const usr = `Startup: ${p.name}. Problem: ${p.problem}. Solution: ${p.solution}. Revenue: ${p.revenue}. Audience: ${p.audience}. Ask: ${p.ask}.
+Q&A Summary: ${qaSummary}
+
+Score each dimension 0-100. Give each judge (vc, founder, customer, angel) an "in" (true/false) and one-sentence verdict.
+
+Return JSON:
+{
+  "scores": {
+    "marketPotential": 0-100,
+    "innovation": 0-100,
+    "businessModel": 0-100,
+    "execution": 0-100,
+    "investmentWorthiness": 0-100
+  },
+  "judgeVerdicts": [
+    {"id":"vc","in":true,"verdict":"..."},
+    {"id":"founder","in":true,"verdict":"..."},
+    {"id":"customer","in":false,"verdict":"..."},
+    {"id":"angel","in":true,"verdict":"..."}
+  ],
+  "decision": "invest|reject|acquire|later",
+  "valuation": "$Xm",
+  "fundingAmount": "$Xk",
+  "reasoning": "2-3 sentence explanation"
+}`;
+
+  try {
+    const raw = await callClaude(sys, usr);
+    const data = parseJSON(raw);
+    if (!data) throw new Error('bad');
+
+    state.scores = data.scores;
+    state.judgeVerdicts = data.judgeVerdicts;
+    state.decision = {
+      decision: data.decision,
+      valuation: data.valuation,
+      fundingAmount: data.fundingAmount,
+      reasoning: data.reasoning
+    };
+    const s = data.scores;
+    state.totalScore = Math.round((s.marketPotential+s.innovation+s.businessModel+s.execution+s.investmentWorthiness)/5);
+  } catch(e) {
+    state.scores = { marketPotential:55, innovation:60, businessModel:50, execution:52, investmentWorthiness:54 };
+    state.judgeVerdicts = JUDGES.map(j=>({id:j.id, in:false, verdict:'Needs more traction before we can invest.'}));
+    state.decision = { decision:'later', valuation:'$2M', fundingAmount:'$0', reasoning:'The team shows promise but needs to demonstrate stronger traction and clearer unit economics before sharks can commit.' };
+    state.totalScore = 54;
+  }
+
+  setLoading(false);
+  renderScoring();
+  setStep(3);
+
+  // Update judge card statuses
+  state.judgeVerdicts.forEach(v => {
+    setJudgeActive(v.id, v.in ? 'in' : 'out');
+  });
+}
+
+// ─── RENDER SCORING ────────────────────────────────────────────────────────
+function renderScoring() {
+  const s = state.scores;
+  const dims = [
+    { key:'marketPotential', label:'Market Potential' },
+    { key:'innovation', label:'Innovation' },
+    { key:'businessModel', label:'Business Model' },
+    { key:'execution', label:'Execution' },
+    { key:'investmentWorthiness', label:'Investment Worthiness' },
+  ];
+  document.getElementById('scores-grid').innerHTML = dims.map(d => {
+    const v = s[d.key] || 0;
+    const cls = v>=70?'high':v>=40?'mid':'low';
+    return `<div class="score-item">
+      <div class="score-label">${d.label} <span>${v}</span></div>
+      <div class="score-bar"><div class="score-fill ${cls}" style="width:0%" data-target="${v}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('total-score-num').textContent = state.totalScore;
+
+  // Animate bars
+  setTimeout(()=>{
+    document.querySelectorAll('.score-fill').forEach(el => {
+      el.style.width = el.dataset.target;
+    });
+  }, 200);
+
+  // Judge verdicts
+  const jv = document.getElementById('judge-verdicts-container');
+  jv.innerHTML = `<div class="card"><div class="card-title">⚖️ Judge Verdicts</div>
+    <div class="judge-verdicts">
+      ${state.judgeVerdicts.map(v => {
+        const j = JUDGES.find(x=>x.id===v.id)||{};
+        return `<div class="verdict-card">
+          <div class="verdict-card-header">
+            <span class="verdict-emoji">${j.emoji||'🦈'}</span>
+            <span class="verdict-judge-name">${j.name||v.id}</span>
+            <span class="verdict-decision ${v.in?'in':'out'}">${v.in?'IN':'OUT'}</span>
+          </div>
+          <div class="verdict-text">${esc(v.verdict)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// ─── DECISION ──────────────────────────────────────────────────────────────
+function showDecision() {
+  const d = state.decision;
+  const icons = { invest:'🤝', reject:'🚫', acquire:'🏢', later:'⏳' };
+  const labels = { invest:'DEAL!', reject:'OUT', acquire:'ACQUISITION', later:'COME BACK LATER' };
+
+  document.getElementById('decision-banner-container').innerHTML = `
+    <div class="decision-banner ${d.decision}">
+      <span class="decision-icon">${icons[d.decision]||'🦈'}</span>
+      <div class="decision-verdict ${d.decision}">${labels[d.decision]||d.decision.toUpperCase()}</div>
+      <div class="decision-meta">
+        <div class="decision-meta-item">
+          <div class="decision-meta-value">${esc(d.valuation||'—')}</div>
+          <div class="decision-meta-label">Valuation</div>
+        </div>
+        <div class="decision-meta-item">
+          <div class="decision-meta-value">${esc(d.fundingAmount||'—')}</div>
+          <div class="decision-meta-label">Funding</div>
+        </div>
+        <div class="decision-meta-item">
+          <div class="decision-meta-value">${state.totalScore}/100</div>
+          <div class="decision-meta-label">Score</div>
+        </div>
+      </div>
+      <div class="decision-reasoning">${esc(d.reasoning||'')}</div>
+    </div>
+  `;
+
+  setStep(4);
+
+  // Save to leaderboard
+  saveLB({
+    name: state.pitch.name,
+    score: state.totalScore,
+    verdict: labels[d.decision]||d.decision,
+    date: new Date().toLocaleDateString()
+  });
+
+  // Confetti if success
+  if (d.decision === 'invest' || d.decision === 'acquire') {
+    launchConfetti();
+  }
+}
+
+// ─── CONFETTI ──────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#F0A500','#22C55E','#3B82F6','#A855F7','#F97316','#EF4444','#FFFFFF'];
+  for (let i = 0; i < 100; i++) {
+    setTimeout(() => {
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.cssText = `
+        left: ${Math.random()*100}vw;
+        top: -20px;
+        background: ${colors[Math.floor(Math.random()*colors.length)]};
+        animation-duration: ${1.5+Math.random()*2}s;
+        animation-delay: 0s;
+        transform: rotate(${Math.random()*360}deg);
+        width: ${6+Math.random()*10}px;
+        height: ${6+Math.random()*10}px;
+      `;
+      document.body.appendChild(piece);
+      setTimeout(() => piece.remove(), 3500);
+    }, Math.random() * 1500);
+  }
+}
+
+// ─── PDF DOWNLOAD ──────────────────────────────────────────────────────────
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const p = state.pitch;
+  const d = state.decision;
+  const s = state.scores;
+
+  const gold = [240, 165, 0];
+  const dark = [17, 24, 39];
+  const white = [240, 244, 255];
+  const muted = [107, 127, 163];
+
+  doc.setFillColor(...dark);
+  doc.rect(0, 0, 210, 297, 'F');
+
+  doc.setFillColor(...gold);
+  doc.rect(0, 0, 210, 40, 'F');
+  doc.setTextColor(0, 0, 0);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28);
+  doc.text('SHARK TANK', 105, 18, { align:'center' });
+  doc.setFontSize(12);
+  doc.text('AI SIMULATOR — PITCH REPORT', 105, 28, { align:'center' });
+  doc.setFontSize(9);
+  doc.text(`Generated ${new Date().toLocaleDateString()}`, 105, 36, { align:'center' });
+
+  let y = 52;
+  doc.setTextColor(...gold);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.text(p.name, 20, y);
+  y += 10;
+
+  doc.setFontSize(9);
+  doc.setTextColor(...muted);
+  const fields = [
+    ['Problem', p.problem],
+    ['Solution', p.solution],
+    ['Revenue', p.revenue],
+    ['Audience', p.audience],
+    ['Ask', p.ask],
+  ];
+  fields.forEach(([label, val]) => {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...gold);
+    doc.text(label + ':', 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...white);
+    const lines = doc.splitTextToSize(val, 150);
+    doc.text(lines, 55, y);
+    y += lines.length * 5 + 3;
+  });
+
+  y += 6;
+  doc.setFillColor(30, 45, 69);
+  doc.rect(15, y-5, 180, 1, 'F');
+  y += 8;
+
+  doc.setTextColor(...gold);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('SCORES', 20, y);
+  y += 8;
+
+  const scoreItems = [
+    ['Market Potential', s.marketPotential],
+    ['Innovation', s.innovation],
+    ['Business Model', s.businessModel],
+    ['Execution', s.execution],
+    ['Investment Worthiness', s.investmentWorthiness],
+  ];
+  scoreItems.forEach(([label, val]) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(...muted);
+    doc.text(label, 20, y);
+    doc.setTextColor(...gold);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${val}/100`, 175, y, { align:'right' });
+    doc.setFillColor(30, 45, 69);
+    doc.rect(20, y+2, 155, 4, 'F');
+    doc.setFillColor(...gold);
+    doc.rect(20, y+2, 155*(val/100), 4, 'F');
+    y += 14;
+  });
+
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gold);
+  doc.text(`TOTAL SCORE: ${state.totalScore}/100`, 105, y, { align:'center' });
+  y += 14;
+
+  doc.setFillColor(30, 45, 69);
+  doc.rect(15, y-5, 180, 1, 'F');
+  y += 8;
+
+  const verdictLabels = { invest:'DEAL!', reject:'OUT', acquire:'ACQUISITION', later:'COME BACK LATER' };
+  const verdictColors = { invest:[34,197,94], reject:[239,68,68], acquire:[168,85,247], later:[249,115,22] };
+  doc.setFontSize(22);
+  doc.setTextColor(...(verdictColors[d.decision]||gold));
+  doc.text(verdictLabels[d.decision]||d.decision, 105, y, { align:'center' });
+  y += 10;
+
+  doc.setFontSize(10);
+  doc.setTextColor(...muted);
+  doc.text(`Valuation: ${d.valuation}   |   Funding: ${d.fundingAmount}`, 105, y, { align:'center' });
+  y += 10;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...white);
+  const reasonLines = doc.splitTextToSize(d.reasoning||'', 160);
+  doc.text(reasonLines, 25, y);
+  y += reasonLines.length * 6 + 8;
+
+  doc.setFillColor(30, 45, 69);
+  doc.rect(15, y-5, 180, 1, 'F');
+  y += 8;
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...gold);
+  doc.text('JUDGE VERDICTS', 20, y);
+  y += 8;
+
+  state.judgeVerdicts.forEach(v => {
+    const j = JUDGES.find(x=>x.id===v.id)||{name:v.id};
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(v.in ? [34,197,94] : [239,68,68]);
+    doc.text(`${j.name} (${v.in?'IN':'OUT'}):`, 20, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...muted);
+    const vlines = doc.splitTextToSize(v.verdict, 130);
+    doc.text(vlines, 65, y);
+    y += vlines.length*5+4;
+  });
+
+  doc.setFontSize(8);
+  doc.setTextColor(...muted);
+  doc.text('Generated by AI Shark Tank Simulator', 105, 290, { align:'center' });
+
+  doc.save(`${p.name.replace(/\s+/g,'_')}_SharkTank_Report.pdf`);
+}
+
+// ─── SHARE ─────────────────────────────────────────────────────────────────
+function shareResult() {
+  const d = state.decision;
+  const labels = { invest:'GOT A DEAL', reject:'was rejected', acquire:'is being acquired', later:'told to come back later' };
+  const text = `🦈 ${state.pitch.name} ${labels[d.decision]||d.decision} on AI Shark Tank! Score: ${state.totalScore}/100. Valuation: ${d.valuation}. Try it yourself!`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('share-toast');
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'), 3000);
+    });
+  }
+}
+
+// ─── RESET ─────────────────────────────────────────────────────────────────
+function resetApp() {
+  ['f-name','f-ask','f-problem','f-solution','f-revenue','f-audience'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('qa-container').innerHTML = '';
+  document.getElementById('decision-banner-container').innerHTML = '';
+  document.getElementById('submit-answers-area').style.display = 'none';
+  state.questions = [];
+  state.scores = {};
+  state.decision = {};
+  state.judgeVerdicts = [];
+  state.totalScore = 0;
+  renderLB();
+  setStep(1);
+}
+</script>
+</body>
+</html>
